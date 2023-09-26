@@ -1,4 +1,6 @@
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Query {
 
@@ -11,6 +13,12 @@ public class Query {
             System.out.println("Kindly Fill out your information :)");
             String name = Print.printScan("What is your full name?", scanner);
             String studentNum = Print.printScan("What is your student number?", scanner);
+            Pattern studentNumVerifier = Pattern.compile("[abc]", Pattern.CASE_INSENSITIVE);
+            Matcher matcher = studentNumVerifier.matcher(studentNum);
+            boolean matchFound = matcher.find();
+            if (matchFound) {
+                System.out.println("try again");
+            }
             String section = Print.printScan("What is your strand and section \nExample: STEM102", scanner);
             String birthdayStr = Print.printScan("When were you born? \nExample: 07/24/2007 (MM/DD/YYYY)", scanner);
             Date birthday = new Date(Integer.parseInt(birthdayStr.substring(0, 2)),
