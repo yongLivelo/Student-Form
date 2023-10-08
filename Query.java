@@ -1,36 +1,74 @@
 import java.util.Scanner;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Query {
 
     public static void main(String[] args) {
+
         Scanner scanner = new Scanner(System.in);
         System.out.println("What is the password?");
         String password = scanner.nextLine();
+        String name = "", section = "", studentNum = "", birthdayStr = "";
         if (password.equals("pogisijulio")) {
-            Print.space(1);
-            System.out.println("Kindly Fill out your information :)");
-            String name = Print.printScan("What is your full name?", scanner);
-            String studentNum = Print.printScan("What is your student number?", scanner);
-            Pattern studentNumVerifier = Pattern.compile("[abc]", Pattern.CASE_INSENSITIVE);
-            Matcher matcher = studentNumVerifier.matcher(studentNum);
-            boolean matchFound = matcher.find();
-            if (matchFound) {
-                System.out.println("try again");
-            }
-            String section = Print.printScan("What is your strand and section \nExample: STEM102", scanner);
-            String birthdayStr = Print.printScan("When were you born? \nExample: 07/24/2007 (MM/DD/YYYY)", scanner);
-            Date birthday = new Date(Integer.parseInt(birthdayStr.substring(0, 2)),
-                    Integer.parseInt(birthdayStr.substring(3, 5)), Integer.parseInt(birthdayStr.substring(6, 10)));
 
-            String toPrint = Print.printScan("Would you like to print a list of your information? (y/n)", scanner);
-            if (toPrint.equals("y")) {
-                Print.printInformation(name, studentNum, section, birthday);
-            } else if (toPrint.equals("n")) {
-                System.out.println("Thank you for filling out this form!");
-            } else {
-                System.out.println("Invalid input, please try again");
+            System.out.println("\nKindly Fill out your information :)");
+
+            boolean isNameCorrect = true;
+            while (isNameCorrect) {
+                name = Print.printScan("What is your full name?", scanner);
+                if (Verifier.name(name)) {
+                    isNameCorrect = false;
+                } else {
+                    System.out.println("\nWrong input, please try again");
+                }
+            }
+
+            boolean isStudentNumberCorrect = true;
+            while (isStudentNumberCorrect) {
+                studentNum = Print.printScan("What is your student number?", scanner);
+                if (Verifier.studentNum(studentNum)) {
+                    isStudentNumberCorrect = false;
+                } else {
+                    System.out.println("\nWrong input, please try again");
+                }
+            }
+
+            boolean isSectionCorrect = true;
+            while (isSectionCorrect) {
+                section = Print.printScan("What is your strand and section \nExample: STEM102", scanner);
+                if (Verifier.section(section)) {
+                    isSectionCorrect = false;
+                } else {
+                    System.out.println("\nWrong input, please try again");
+                }
+            }
+
+            boolean isBirthdayCorrect = true;
+            while (isBirthdayCorrect) {
+                birthdayStr = Print.printScan("When were you born? \nExample:  07/24/2007 (MM/DD/YYYY)", scanner);
+                if (Verifier.date(birthdayStr)) {
+                    isBirthdayCorrect = false;
+                } else {
+                    System.out.println("\nWrong input, please try again");
+                }
+            }
+
+            Date birthday = new Date(birthdayStr);
+
+            boolean isCorrect = true;
+            while (isCorrect) {
+                String toPrint = Print.printScan("Would you like to print a list of your information? (y/n)", scanner);
+                if (toPrint.equals("y")) {
+                    Print.printInformation(name, studentNum, section, birthday);
+                    isCorrect = false;
+                } else if (toPrint.equals("n")) {
+                    System.out.println("Thank you for filling out this form!");
+                    isCorrect = false;
+                } else {
+                    System.out.println("Wrong input, please try again");
+                    System.out.println("\nInvalid input, please try again");
+                }
+
             }
         } else {
             System.out.println("Wrong Password, Try again :)");
@@ -41,17 +79,22 @@ public class Query {
 }
 
 class Date {
+    public static final int currentYear = 2023;
+
     int day, month, year;
-    String[] months = { "January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October",
+
+    String[] months = { "January", "Febuary", "March", "April", "May", "June", "July", "August", "September",
+            "October",
             "November", "December" };
 
-    public Date(int month, int day, int year) {
-        this.month = month;
-        this.day = day;
-        this.year = year;
+    public Date(String date) {
+        String[] dateArr = date.split("/");
+        month = Integer.parseInt(dateArr[0]);
+        day = Integer.parseInt(dateArr[1]);
+        year = Integer.parseInt(dateArr[2]);
     }
 
-    public int getAge(int currentYear) {
+    public int getAge() {
         return currentYear - this.year;
     }
 
@@ -64,47 +107,70 @@ class Date {
 class Print {
     public static void printInformation(String name, String studentNum, String Section, Date birthday) {
         String line = ("--------------------");
-        space(6);
-        System.out.println("User Information");
+        System.out.println("\n\n\n\n\n\nUser Information");
         System.out.println(line);
         System.out.println("Name: \t\t" + name);
         System.out.println("Student Number: " + studentNum);
         System.out.println("Section: \t" + Section);
         System.out.println("Birthday: \t" + birthday.getBdayText());
-        System.out.println("age: \t\t" + birthday.getAge(2023));
+        System.out.println("age: \t\t" + birthday.getAge());
         System.out.println(line);
     }
 
     public static String printScan(String print, Scanner scanner) {
-        space(1);
-        System.out.println(print);
+
+        System.out.println("\n" + print);
         String scan = scanner.nextLine();
         return scan;
-    }
-
-    public static void space(int spaces) {
-        for (int i = 0; i < spaces; i++) {
-            System.out.println("");
-        }
 
     }
+
 }
 
 class Verifier {
-    public static void verifier(String type, String value) {
-        String[] valueArr = value.split("");
-        if (type.equals("studentNumber")) {
-            if (value.length() != 11) {
-                for (int i = 0; i < 11; i++) {
-                    Integer.parseInt(valueArr[i]);
-                }
+    public static boolean name(String name) {
+        boolean matchFound = Pattern.matches("[a-zA-Z]+", name);
+        if (matchFound) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
+    public static boolean studentNum(String studentNum) {
+        boolean matchFound = Pattern.matches("[0-9]+", studentNum);
+        if ((studentNum.length() == 11) && matchFound) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean section(String section) {
+        String[] sections = { "STEM", "MAWD", "CCTECH", "HUMMS", "ABM", "CUARTS",
+                "TOPPERS" };
+        String sectionInput = section.substring(0, section.length() - 3);
+        for (int i = 0; i < sections.length; i++) {
+            if (sections[i].equals(sectionInput)) {
+                return true;
             }
         }
+        return false;
+    }
 
-        String[] section = { "MAWD", "HUMMS", "STEM", "CCTECH", "ABM" };
-        if (type.equals("section")) {
-
+    public static boolean date(String date) {
+        try {
+            if (date.length() == 10) {
+                String[] dateArr = date.split("/");
+                int month = Integer.parseInt(dateArr[0]);
+                int day = Integer.parseInt(dateArr[1]);
+                int year = Integer.parseInt(dateArr[2]);
+                if (month <= 12 && month > 0 && day <= 31 && day > 0 && year < Date.currentYear)
+                    return true;
+            }
+        } catch (Exception e) {
+            return false;
         }
+        return false;
+
     }
 }
