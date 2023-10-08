@@ -13,51 +13,20 @@ public class Query {
 
             System.out.println("\nKindly Fill out your information :)");
 
-            boolean isNameCorrect = true;
-            while (isNameCorrect) {
-                name = Print.printScan("What is your full name?", scanner);
-                if (Verifier.name(name)) {
-                    isNameCorrect = false;
-                } else {
-                    System.out.println("\nWrong input, please try again");
-                }
-            }
+            name = Print.printScan("What is your full name?", scanner, "name");
 
-            boolean isStudentNumberCorrect = true;
-            while (isStudentNumberCorrect) {
-                studentNum = Print.printScan("What is your student number?", scanner);
-                if (Verifier.studentNum(studentNum)) {
-                    isStudentNumberCorrect = false;
-                } else {
-                    System.out.println("\nWrong input, please try again");
-                }
-            }
+            studentNum = Print.printScan("What is your student number?", scanner, "studentNum");
 
-            boolean isSectionCorrect = true;
-            while (isSectionCorrect) {
-                section = Print.printScan("What is your strand and section \nExample: STEM102", scanner);
-                if (Verifier.section(section)) {
-                    isSectionCorrect = false;
-                } else {
-                    System.out.println("\nWrong input, please try again");
-                }
-            }
+            section = Print.printScan("What is your strand and section \nExample: STEM102", scanner, "section");
 
-            boolean isBirthdayCorrect = true;
-            while (isBirthdayCorrect) {
-                birthdayStr = Print.printScan("When were you born? \nExample:  07/24/2007 (MM/DD/YYYY)", scanner);
-                if (Verifier.date(birthdayStr)) {
-                    isBirthdayCorrect = false;
-                } else {
-                    System.out.println("\nWrong input, please try again");
-                }
-            }
+            birthdayStr = Print.printScan("When were you born? \nExample:  07/24/2007 (MM/DD/YYYY)", scanner, "date");
 
             Date birthday = new Date(birthdayStr);
 
             boolean isCorrect = true;
             while (isCorrect) {
-                String toPrint = Print.printScan("Would you like to print a list of your information? (y/n)", scanner);
+                String toPrint = Print.printScan("\nWould you like to print a list of your information? (y/n)", scanner,
+                        "");
                 if (toPrint.equals("y")) {
                     Print.printInformation(name, studentNum, section, birthday);
                     isCorrect = false;
@@ -65,12 +34,13 @@ public class Query {
                     System.out.println("Thank you for filling out this form!");
                     isCorrect = false;
                 } else {
-                    System.out.println("Wrong input, please try again");
                     System.out.println("\nInvalid input, please try again");
                 }
 
             }
-        } else {
+        } else
+
+        {
             System.out.println("Wrong Password, Try again :)");
         }
         scanner.close();
@@ -117,11 +87,40 @@ class Print {
         System.out.println(line);
     }
 
-    public static String printScan(String print, Scanner scanner) {
+    public static String printScan(String print, Scanner scanner, String type) {
+        // loops when input is validated to be incorrect
+        boolean isCorrect = true;
+        boolean continueLoop = true;
+        while (isCorrect) {
+            System.out.println("\n" + print);
+            String input = scanner.nextLine();
+            switch (type) {
+                case "name":
+                    continueLoop = Verifier.name(input);
+                    break;
+                case "studentNum":
+                    continueLoop = Verifier.studentNum(input);
+                    break;
+                case "section":
+                    continueLoop = Verifier.section(input);
+                    break;
+                case "date":
+                    continueLoop = Verifier.date(input);
+                    break;
+                default:
+                    return input;
+            }
 
-        System.out.println("\n" + print);
-        String scan = scanner.nextLine();
-        return scan;
+            if (continueLoop) {
+                isCorrect = false;
+                return input;
+            } else {
+                System.out.println("\nWrong input, please try again");
+
+            }
+
+        }
+        return "";
 
     }
 
