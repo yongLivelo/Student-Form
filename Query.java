@@ -129,7 +129,7 @@ class Print {
 
 class Verifier {
     public static boolean name(String name) {
-        boolean matchFound = Pattern.matches("[a-zA-Z]+", name);
+        boolean matchFound = Pattern.matches("[a-zA-Z\s]+", name);
         if (matchFound) {
             return true;
         } else {
